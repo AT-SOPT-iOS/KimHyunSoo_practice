@@ -7,11 +7,17 @@
 
 import UIKit
 
-class WelcomeViewController:UIViewController {
+protocol DataBindDelegate: AnyObject {
+    func dataBind(id: String)
+}
+
+class WelcomeViewController_DelegatePattern: UIViewController {
     
     // MARK: - Property
     
     var id: String? = ""
+    
+    weak var delegate: DataBindDelegate?
     
     let image:UIImageView = {
         let image = UIImageView(frame: CGRect(x: 130, y: 112, width: 150, height: 150))
@@ -81,6 +87,11 @@ class WelcomeViewController:UIViewController {
     
     @objc
     private func backToLoginButtonDidTap() {
+        
+        if let id = id {
+            delegate?.dataBind(id: id)
+        }
+        
         if self.navigationController == nil {
             self.dismiss(animated: true)
         } else {
