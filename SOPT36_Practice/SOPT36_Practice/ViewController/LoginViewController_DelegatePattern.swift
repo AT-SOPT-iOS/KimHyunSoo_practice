@@ -7,7 +7,7 @@
 
 import UIKit
 
-class LoginViewController: UIViewController {
+class LoginViewController_DelegatePattern: UIViewController {
     
     // MARK: - Property
     
@@ -70,14 +70,15 @@ class LoginViewController: UIViewController {
     // MARK: - Function
     
     private func presentToWelcomeVC() {
-        let welcomeViewController = WelcomeViewController()
-        welcomeViewController.modalPresentationStyle = .formSheet
+        let welcomeViewController = WelcomeViewController_DelegatePattern()
+        welcomeViewController.delegate = self
         welcomeViewController.id = idTextField.text
         self.present(welcomeViewController, animated: true)
     }
     
     private func pushToWelcomeVC() {
-        let welcomeViewController = WelcomeViewController()
+        let welcomeViewController = WelcomeViewController_DelegatePattern()
+        welcomeViewController.delegate = self
         welcomeViewController.id = idTextField.text
         self.navigationController?.pushViewController(welcomeViewController, animated: true)
     }
@@ -86,6 +87,12 @@ class LoginViewController: UIViewController {
     private func loginButtonDidTap() {
         //presentToWelcomeVC()
         pushToWelcomeVC()
+    }
+}
+
+extension LoginViewController_DelegatePattern: DataBindDelegate {
+    func dataBind(id: String) {
+        idTextField.text = id
     }
 }
 
