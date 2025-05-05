@@ -64,8 +64,8 @@ class RegisterService {
         }
         
         do {
-            let decoded = try JSONDecoder().decode(RegisterResponseBody.self, from: data)
-            return decoded
+            let decoded = try JSONDecoder().decode(RegisterResponseWrapper.self, from: data)
+            return decoded.data
         } catch {
             throw error
         }
