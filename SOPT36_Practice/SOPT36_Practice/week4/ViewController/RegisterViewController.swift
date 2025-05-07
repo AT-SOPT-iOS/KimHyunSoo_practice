@@ -32,7 +32,6 @@ final class RegisterViewController: UIViewController {
         self.present(loginVC, animated: true)
     }
     
-    
     @objc private func textFieldDidEditing(_ textField: UITextField) {
         switch textField {
         case idTextField:

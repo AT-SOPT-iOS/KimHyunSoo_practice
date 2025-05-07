@@ -21,10 +21,12 @@ final class LoginViewController: UIViewController {
     private let nicknameTextField = UITextField()
     private let nicknameLabel = UILabel()
     private let nicknameButton = UIButton()
+    private let getNicknameButton = UIButton()
     private let loginButton = UIButton()
     
     private var loginId: String = ""
     private var password: String = ""
+    private var userId: Int? = nil
     
     // MARK: - LifeCycle
     
@@ -75,6 +77,12 @@ final class LoginViewController: UIViewController {
             $0.font = .systemFont(ofSize: 15, weight: .bold)
         }
         
+        getNicknameButton.do {
+            $0.backgroundColor = .blue
+            $0.setTitle("닉네임 조회하기", for: .normal)
+            $0.titleLabel?.textColor = .white
+        }
+        
         nicknameButton.do {
             $0.backgroundColor = .blue
             $0.setTitle("닉네임 변경하기", for: .normal)
@@ -91,7 +99,7 @@ final class LoginViewController: UIViewController {
     private func setUI() {
         self.view.addSubview(stackView)
         
-        [idTextField, passwordTextField, nicknameTextField, nicknameButton, loginButton].forEach {
+        [idTextField, passwordTextField, nicknameLabel, getNicknameButton, nicknameTextField, nicknameButton, loginButton].forEach {
             self.stackView.addArrangedSubview($0)
         }
     }
@@ -107,6 +115,7 @@ final class LoginViewController: UIViewController {
         idTextField.addTarget(self, action: #selector(textFieldDidEditing), for: .allEvents)
         passwordTextField.addTarget(self, action: #selector(textFieldDidEditing), for: .allEvents)
         loginButton.addTarget(self, action: #selector(loginButtonTap), for: .touchUpInside)
+        getNicknameButton.addTarget(self, action: #selector(getNicknameButtonTap), for: .touchUpInside)
     }
     
     @objc
@@ -125,6 +134,8 @@ final class LoginViewController: UIViewController {
             do {
                 let response = try await LoginService.shared.PostLoginData(loginId: self.loginId, password: self.password)
                 
+                self.userId = response.userId
+                
                 let alert = UIAlertController(title: "로그인 성공", message: "환영해요", preferredStyle: .alert)
                 
                 let okAction = UIAlertAction(title: "확인", style: .default)
@@ -137,6 +148,23 @@ final class LoginViewController: UIViewController {
                 self.present(alert, animated: true)
                 
                 print("로그인 에러: ", error)
+            }
+        }
+    }
+    
+    @objc
+    private func getNicknameButtonTap() {
+        Task {
+            guard let userId = self.userId else {
+                self.nicknameLabel.text = "로그인 해주세요."
+                return
+            }
+            
+            do {
+                let nickname = try await GetMyInfoService.shaed.fetchNickname(userId: userId)
+                self.nicknameLabel.text = "닉네임: \(nickname)"
+            } catch {
+                self.nicknameLabel.text = "로그인 해주세요."
             }
         }
     }
