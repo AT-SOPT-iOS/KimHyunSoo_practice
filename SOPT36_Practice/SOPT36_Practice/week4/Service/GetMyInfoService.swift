@@ -8,7 +8,7 @@
 import UIKit
 
  class GetMyInfoService {
-    static let shaed = GetMyInfoService()
+    static let shared = GetMyInfoService()
      private init() {}
      
      func makeRequest(userId: Int) -> URLRequest? {

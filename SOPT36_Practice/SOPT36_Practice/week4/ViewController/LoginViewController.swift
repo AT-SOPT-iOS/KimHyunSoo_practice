@@ -27,6 +27,7 @@ final class LoginViewController: UIViewController {
     private var loginId: String = ""
     private var password: String = ""
     private var userId: Int? = nil
+    private var nickname: String = ""
     
     // MARK: - LifeCycle
     
@@ -116,6 +117,7 @@ final class LoginViewController: UIViewController {
         passwordTextField.addTarget(self, action: #selector(textFieldDidEditing), for: .allEvents)
         loginButton.addTarget(self, action: #selector(loginButtonTap), for: .touchUpInside)
         getNicknameButton.addTarget(self, action: #selector(getNicknameButtonTap), for: .touchUpInside)
+        nicknameButton.addTarget(self, action: #selector(updateNicknameButtonTap), for: .touchUpInside)
     }
     
     @objc
@@ -123,8 +125,10 @@ final class LoginViewController: UIViewController {
         switch textField {
         case idTextField:
             loginId = textField.text ?? ""
-        default:
+        case passwordTextField:
             password = textField.text ?? ""
+        default:
+            nickname = nicknameTextField.text ?? ""
         }
     }
     
@@ -161,10 +165,45 @@ final class LoginViewController: UIViewController {
             }
             
             do {
-                let nickname = try await GetMyInfoService.shaed.fetchNickname(userId: userId)
+                let nickname = try await GetMyInfoService.shared.fetchNickname(userId: userId)
                 self.nicknameLabel.text = "닉네임: \(nickname)"
             } catch {
                 self.nicknameLabel.text = "로그인 해주세요."
+            }
+        }
+    }
+    
+    @objc
+    private func updateNicknameButtonTap() {
+        Task {
+            guard let userId = self.userId else {
+                self.nicknameLabel.text = "로그인 해주세요."
+                return
+            }
+            
+            guard let newNickname = nicknameTextField.text, !newNickname.isEmpty else {
+                self.nicknameLabel.text = "닉네임을 입력해주세요."
+                return
+            }
+            
+            do {
+                let response = try await UpdateNicknameService.shared.UpdateNicknameData(userId: userId, nickname: newNickname)
+                
+                let alert = UIAlertController(title: "닉네임 변경 성공", message: "축하드려요", preferredStyle: .alert)
+                
+                let okAction = UIAlertAction(title: "확인", style: .default)
+                alert.addAction(okAction)
+                self.present(alert, animated: true)
+                
+                self.nicknameLabel.text = "새 닉네임: \(newNickname)"
+            } catch {
+                let alert = UIAlertController(
+                    title: "닉네임 변경 실패", message: error.localizedDescription, preferredStyle: .alert
+                )
+                let okAction = UIAlertAction(title: "확인", style: .default)
+                alert.addAction(okAction)
+                self.present(alert, animated: true)
+                print("닉네임 변경 에러:", error)
             }
         }
     }
