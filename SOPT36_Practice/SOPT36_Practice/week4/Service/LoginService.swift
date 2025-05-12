@@ -29,7 +29,7 @@ class LoginService {
     }
     
     func makeRequest(body: Data?) -> URLRequest {
-        let url = URL(string: "https://api.atsopt-seminar4.site/api/v1/auth/signin")!
+        let url = URL(string: "\(BASE_URL)v1/auth/signin")!
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         let header = ["Content-Type": "application/json"]

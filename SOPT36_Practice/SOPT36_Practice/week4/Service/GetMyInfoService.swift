@@ -12,7 +12,7 @@ import UIKit
      private init() {}
      
      func makeRequest(userId: Int) -> URLRequest? {
-         var urlString = "http://api.atsopt-seminar4.site/api/v1/users/me"
+         var urlString = "\(BASE_URL)v1/users/me"
          
          guard let url = URL(string: urlString) else { return nil }
          var request = URLRequest(url: url)

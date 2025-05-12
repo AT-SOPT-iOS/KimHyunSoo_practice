@@ -24,7 +24,7 @@ class UpdateNicknameService {
     }
     
     func makeRequest(userId: Int, body: Data?) -> URLRequest? {
-        let url = URL(string: "http://api.atsopt-seminar4.site/api/v1/users")!
+        let url = URL(string: "\(BASE_URL)v1/users")!
         
         var request = URLRequest(url: url)
         request.httpMethod = "PATCH"

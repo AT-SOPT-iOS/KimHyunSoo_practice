@@ -12,7 +12,7 @@ final class GetInfoService {
     private init() {}
     
     func makeRequest(keyword: String?) -> URLRequest? {
-        var urlString = "http://api.atsopt-seminar4.site/api/v1/users"
+        var urlString = "\(BASE_URL)v1/users"
         
         if let keyword = keyword, !keyword.isEmpty,
            let encoded = keyword.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) {
